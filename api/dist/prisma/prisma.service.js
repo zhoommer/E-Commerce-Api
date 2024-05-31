@@ -15,7 +15,7 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 let PrismaService = class PrismaService extends client_1.PrismaClient {
     constructor(config) {
-        const url = config.get("DATABASE_URL");
+        const url = config.get('DATABASE_URL');
         super({
             datasources: {
                 db: {
@@ -31,7 +31,7 @@ let PrismaService = class PrismaService extends client_1.PrismaClient {
         await this.$disconnect();
     }
     async cleanDatabase() {
-        if (process.env.NODE_ENV === "production")
+        if (process.env.NODE_ENV === 'production')
             return;
         return Promise.all([this.user.deleteMany()]);
     }

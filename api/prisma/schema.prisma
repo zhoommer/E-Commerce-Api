@@ -1,27 +1,171 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id      Int    @id @default(autoincrement())
-  email   String @unique
-  name    String
-  surname String
-  mobile  String
-  role    String
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  addressId    Int?
+  phone        String
+  orderHistory Order[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  address   Address?   @relation(fields: [addressId], references: [id])
+  role      ROLE       @default(USER)
+  Review    Review[]
+  Cart      Cart[]
+  Merchants Merchants?
 }
 
-model Products {
-  id    Int    @id @default(autoincrement())
-  title String
-  brand String
-  size  String
+model Merchants {
+  id     Int    @id @default(autoincrement())
+  userId Int    @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name   String
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  price       Float
+  category    String
+  brand       String
+  slug        String
+  stock       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  images     Image[]
+  attributes Attribute[]
+  Review     Review[]
+  OrderItem  OrderItem[]
+  CartItem   CartItem[]
+}
+
+model Image {
+  id        Int    @id @default(autoincrement())
+  url       String
+  productId Int
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id                Int         @id @default(autoincrement())
+  userId            Int
+  orderDate         DateTime    @default(now())
+  status            String
+  totalAmount       Float
+  items             OrderItem[]
+  shippingAddressId Int
+  paymentDetailsId  Int
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @default(now())
+
+  user            User           @relation(fields: [userId], references: [id])
+  shippingAddress Address        @relation(fields: [shippingAddressId], references: [id])
+  paymentDetails  PaymentDetails @relation(fields: [paymentDetailsId], references: [id])
+}
+
+model Address {
+  id      Int    @id @default(autoincrement())
+  street  String
+  city    String
+  state   String
+  zip     String
+  country String
+
+  user  User[]
+  order Order[]
+}
+
+model PaymentDetails {
+  id            Int    @id @default(autoincrement())
+  method        String
+  transactionId String
+
+  order Order[]
+}
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  userId    Int
+  rating    Float
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model Cart {
+  id          Int        @id @default(autoincrement())
+  userId      Int
+  items       CartItem[]
+  totalAmount Float
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model OrderItem {
+  id        Int   @id @default(autoincrement())
+  productId Int
+  orderId   Int
+  quantity  Int
+  price     Float
+
+  product Product @relation(fields: [productId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id])
+}
+
+model CartItem {
+  id        Int @id @default(autoincrement())
+  productId Int
+  cartId    Int
+  quantity  Int
+
+  product Product @relation(fields: [productId], references: [id])
+  cart    Cart    @relation(fields: [cartId], references: [id])
+}
+
+model Attribute {
+  id        Int      @id @default(autoincrement())
+  color     String
+  size      String
+  Product   Product? @relation(fields: [productId], references: [id])
+  productId Int?
+}
+
+enum ROLE {
+  USER
+  ADMIN
 }
