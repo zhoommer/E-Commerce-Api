@@ -1,4 +1,5 @@
 export type JwtPayload = {
-  email: string;
+  email?: string;
+  phone?: string;
   sub: number;
 };

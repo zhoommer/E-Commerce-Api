@@ -16,12 +16,15 @@ datasource db {
 
 model User {
   id           Int      @id @default(autoincrement())
-  username     String   @unique
+  name         String
+  surname      String
+  gender       GENDER?
+  birthDate    String?
   email        String   @unique
   passwordHash String
-  fullName     String
+  hashedRt     String?
   addressId    Int?
-  phone        String
+  phone        String   @unique
   orderHistory Order[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -168,4 +171,9 @@ model Attribute {
 enum ROLE {
   USER
   ADMIN
+}
+
+enum GENDER {
+  MAN
+  WOMAN
 }
