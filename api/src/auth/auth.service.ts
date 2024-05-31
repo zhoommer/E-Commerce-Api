@@ -75,7 +75,14 @@ export class AuthService {
 
     await this.updateRtHash(user.id, tokens.refresh_token);
 
-    return tokens;
+    return {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      user: {
+        name: user.name,
+        surname: user.surname,
+      },
+    };
   }
 
   async updateRtHash(userId: number, rt: string): Promise<void> {
