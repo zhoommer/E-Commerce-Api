@@ -33,10 +33,6 @@ export class AuthService {
     const user = await this.prisma.user.create({
       data: {
         email: dto.email,
-        name: dto.name,
-        surname: dto.surname,
-        phone: dto.phone,
-        birthDate: dto.birtDate,
         gender: dto.gender,
         passwordHash,
       },
@@ -44,7 +40,12 @@ export class AuthService {
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refresh_token);
 
-    return tokens;
+    return {
+      message:
+        'Uyeliginiz olusturuldu. Simdi frendyolun avantajlarindan faydalanabilirsiniz.',
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+    };
   }
 
   async signIn(dto: SignInDto): Promise<Tokens> {

@@ -16,15 +16,15 @@ datasource db {
 
 model User {
   id           Int      @id @default(autoincrement())
-  name         String
-  surname      String
-  gender       GENDER?
+  name         String?
+  surname      String?
+  gender       String?
   birthDate    String?
   email        String   @unique
   passwordHash String
   hashedRt     String?
   addressId    Int?
-  phone        String   @unique
+  phone        String?  @unique
   orderHistory Order[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
