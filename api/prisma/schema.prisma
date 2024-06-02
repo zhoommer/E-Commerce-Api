@@ -29,11 +29,13 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  address   Address?   @relation(fields: [addressId], references: [id])
-  role      ROLE       @default(USER)
+  address   Address?    @relation(fields: [addressId], references: [id])
+  role      ROLE        @default(USER)
   Review    Review[]
   Cart      Cart[]
   Merchants Merchants?
+  Favorites Favorites[]
+  Reviews   Reviews[]
 }
 
 model Merchants {
@@ -44,30 +46,53 @@ model Merchants {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  price       Float
-  category    String
-  brand       String
-  slug        String
-  stock       Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+  name           String
+  description    String
+  price          Float
+  discount_price Float?
+  category       String
+  brand          String
+  slug           String
+  rating         Float
+  stock          Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now())
 
   images     Image[]
   attributes Attribute[]
   Review     Review[]
   OrderItem  OrderItem[]
   CartItem   CartItem[]
+  Favorites  Favorites[]
+  Reviews    Reviews[]
 }
 
 model Image {
-  id        Int    @id @default(autoincrement())
-  url       String
+  id        Int     @id @default(autoincrement())
+  url       String?
   productId Int
 
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Favorites {
+  id        Int @id @default(autoincrement())
+  productId Int
+  userId    Int
+
+  product Product? @relation(fields: [productId], references: [id])
+  user    User?    @relation(fields: [userId], references: [id])
+}
+
+model Reviews {
+  id        Int     @id @default(autoincrement())
+  productId Int?
+  userId    Int?
+  review    String?
+
+  product Product? @relation(fields: [productId], references: [id])
+  user    User?    @relation(fields: [userId], references: [id])
 }
 
 model Order {
