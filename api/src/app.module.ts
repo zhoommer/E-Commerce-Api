@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/guards';
 import { JwtModule } from '@nestjs/jwt';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     PrismaModule,
     AuthModule,
+    ProductModule,
   ],
   controllers: [AppController, AuthController],
   providers: [

@@ -35,7 +35,6 @@ model User {
   Cart      Cart[]
   Merchants Merchants?
   Favorites Favorites[]
-  Reviews   Reviews[]
 }
 
 model Merchants {
@@ -54,7 +53,6 @@ model Product {
   category       String
   brand          String
   slug           String
-  rating         Float
   stock          Int
   createdAt      DateTime @default(now())
   updatedAt      DateTime @default(now())
@@ -65,7 +63,6 @@ model Product {
   OrderItem  OrderItem[]
   CartItem   CartItem[]
   Favorites  Favorites[]
-  Reviews    Reviews[]
 }
 
 model Image {
@@ -80,16 +77,6 @@ model Favorites {
   id        Int @id @default(autoincrement())
   productId Int
   userId    Int
-
-  product Product? @relation(fields: [productId], references: [id])
-  user    User?    @relation(fields: [userId], references: [id])
-}
-
-model Reviews {
-  id        Int     @id @default(autoincrement())
-  productId Int?
-  userId    Int?
-  review    String?
 
   product Product? @relation(fields: [productId], references: [id])
   user    User?    @relation(fields: [userId], references: [id])
@@ -144,8 +131,8 @@ model Review {
   id        Int      @id @default(autoincrement())
   productId Int
   userId    Int
-  rating    Float
-  comment   String
+  rating    Float?
+  comment   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
